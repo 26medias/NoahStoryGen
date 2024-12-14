@@ -7,7 +7,7 @@ import json
 class Story:
     def __init__(self):
         self.gpt = GPT()
-        self.image = Image()
+        self.image = StoryImage()
 
     def write(self, filename, data):
         try:
@@ -59,6 +59,15 @@ class Story:
         return output
     
     def generatePages(self, project, cwd="./"):
+        output = []
+        for n, page in enumerate(project["pages"]):
+            sentences = page.split("\n")
+            img = project["illustrations"][n]
+            self.image.create_page(f"{cwd}/{img}", sentences[0], sentences[1], f"{cwd}/page_{n}.png")
+            output.append(f"page_{n}.png")
+        return output
+    
+    def generatePages_html(self, project, cwd="./"):
         output = []
         for n, page in enumerate(project["pages"]):
             text = "<p>" + "</p><p>".join(page.split("\n")) + "</p>"

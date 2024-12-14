@@ -11,6 +11,9 @@ from bs4 import BeautifulSoup
 from typing import List, Tuple
 import logging
 
+from reportlab.lib.pagesizes import landscape, letter
+from reportlab.pdfgen import canvas
+
 class PdfBuilder:
     """
     A class to convert multiple HTML files into a single PDF file,
@@ -23,6 +26,40 @@ class PdfBuilder:
         Sets up logging configuration.
         """
         self.setup_logging()
+
+    def assemble_pdf(self, image_files, output_pdf, cwd):
+        """
+        Assembles individual pages (as images) into a landscape PDF with 2 pages per sheet.
+
+        Parameters:
+        - image_files (list of str): List of paths to the image files.
+        - output_pdf (str): Path to save the assembled PDF.
+        """
+        # Create a canvas for the PDF
+        c = canvas.Canvas(output_pdf, pagesize=landscape(letter))
+
+        # Dimensions for placing two pages per sheet
+        sheet_width, sheet_height = landscape(letter)
+        image_width, image_height = sheet_width // 2, sheet_height
+
+        # Add images to the PDF
+        for i in range(0, len(image_files), 2):
+            file = f"{cwd}/{image_files[i]}"
+            # Draw the first image on the left
+            c.drawImage(file, 0, 0, width=image_width, height=image_height)
+
+            # Draw the second image on the right (if it exists)
+            if i + 1 < len(image_files):
+                c.drawImage(
+                    f"{cwd}/{image_files[i+1]}", image_width, 0, width=image_width, height=image_height
+                )
+
+            # Finish the page
+            c.showPage()
+
+        # Save the PDF
+        c.save()
+        print(f"Saved PDF to {output_pdf}")
 
     def setup_logging(self):
         """
@@ -145,9 +182,8 @@ class PdfBuilder:
                 parent=styles['Normal'],
                 fontName='Helvetica-Bold',
                 fontSize=30,
-                leading=36,  # Ensures proper line spacing
                 alignment=1,  # Center alignment
-                spaceAfter=20  # Adds spacing after the paragraph
+                spaceAfter=20
             )
 
             elements = []
