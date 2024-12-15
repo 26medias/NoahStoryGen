@@ -14,7 +14,11 @@ client = OpenAI(api_key=api_key)
 
 class GPT:
     def ask(self, sys_prompt="", prompt="", history=[], screenshot=None, model="gpt-4o", temperature=0.9):
-        messages = [{"role": "system", "content": [{"type": "text", "text": sys_prompt}]}] + history
+        if "o1" in model:
+            messages = [{"role": "user", "content": [{"type": "text", "text": sys_prompt}]}] + history
+            temperature = 1
+        else:
+            messages = [{"role": "system", "content": [{"type": "text", "text": sys_prompt}]}] + history
 
         if screenshot:
             with open(screenshot, "rb") as image_file:

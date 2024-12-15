@@ -39,8 +39,24 @@ class Story:
     def generateImagesPrompts(self, pages=[], characters=[]):
         sys_prompt = self.gpt.getPrompt('prompts/image-prompts.txt', {"characters": json.dumps(characters, indent=4)})
         response = self.gpt.ask(sys_prompt, json.dumps(pages, indent=4), model="gpt-4o-mini")
-        prompts = response["illustrations"]
-        return prompts
+        illustrations = response["illustrations"]
+        prompts = [prompt["description"] for prompt in illustrations]
+
+        print("-------------")
+        print("BEFORE")
+        print(json.dumps(illustrations, indent=4))
+
+        # Verify
+        sys_prompt_verify = self.gpt.getPrompt('prompts/image-prompts-verify.txt')
+        response = self.gpt.ask(sys_prompt_verify, json.dumps(illustrations, indent=4), model="gpt-4o-mini")
+        illustrations = response["illustrations"]
+        prompts = [prompt["description"] for prompt in illustrations]
+
+        print("-------------")
+        print("AFTER")
+        print(json.dumps(illustrations, indent=4))
+
+        return prompts, illustrations
     
     def generateIllustrations(self, prompts=[], cwd="./"):
         output = []

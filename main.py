@@ -27,9 +27,10 @@ class Generator(Project):
             self.saveProject()
 
         if "prompts" not in self.project:
-            prompts = self.story.generateImagesPrompts(pages=self.project["pages"], characters=self.project["characters"])
+            prompts, raw = self.story.generateImagesPrompts(pages=self.project["pages"], characters=self.project["characters"])
             print(json.dumps(prompts, indent=4))
             self.project["prompts"] = prompts
+            self.project["prompts_raw"] = raw
             self.saveProject()
 
         if "illustrations" not in self.project:
@@ -48,6 +49,7 @@ class Generator(Project):
             pdf = self.pdf.assemble_pdf(self.project["html"], f"{self.projectPath}/book.pdf", cwd=self.projectPath)
             self.project["pdf"] = "book.pdf"
             self.saveProject()
+        return
 
 
         # if "pdf" not in self.project:
@@ -58,7 +60,7 @@ class Generator(Project):
         
 
 gen = Generator()
-gen.open("Optimus")
+gen.open("beach-treasure-4")
 
 #gen.generate('A story about "Ms DSouza", a kind teacher at "AMS" (40s, indian, dark hair), and "Noah" (6 years old, *blond hair*, caucasian kid). Noah learns to read with his teacher. Happy ending.', pages=10)
 
@@ -66,4 +68,10 @@ gen.open("Optimus")
 
 # gen.generate('A story about "Cop Cat", a cat who is a cop. A Transformer makes a mess in the towN; Cop cat needs to stop him and together they clean the mess. No fighting. Happy ending.', pages=10)
 
-gen.generate('A story about Optimus Prime learning to transform. Happy ending.', pages=10)
+#gen.generate('A story about "Cop Cat", a cat who is a cop in a far west town. He needs to catch Billy The Kid (a human). Conflict resolution. Happy ending.', pages=10)
+
+#gen.generate('A squirrel and a chipmunk work together to open a mystery box in the forest.', pages=10)
+
+gen.generate('Noah is digging in the sand and finds an old compass with an arrow that spins. The arrow points him to a big log on the beach. Under the log, he finds a metal box, but it\'s locked. The compass points again, and Noah finds a key hidden inside a cluster of shells nearby. Noah is a blond 6-year-old boy.', pages=16)
+
+#gen.generate('A story about Optimus Prime learning to transform. Happy ending.', pages=10)

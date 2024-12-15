@@ -36,7 +36,7 @@ class StoryImage:
         """
         # Page dimensions
         page_width, page_height = 1200, 1600  # Adjust as needed
-        margin = 50
+        margin = 90
 
         # Load the image and resize it
         image = PILImage.open(image_path)
